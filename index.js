@@ -9,6 +9,11 @@ import { createHash } from 'node:crypto';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'node:stream';
 import path from 'node:path';
+import { createServer } from 'node:http';
+
+/* Tiny HTTP server: Render "Web Service" needs an open port, and UptimeRobot pings it to keep the free plan awake. */
+createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('ok'); })
+  .listen(process.env.PORT || 10000, () => console.log('health server on port', process.env.PORT || 10000));
 
 const CREDS = process.env.GOOGLE_APPLICATION_CREDENTIALS || './serviceAccount.json';
 if(!existsSync(CREDS)){
