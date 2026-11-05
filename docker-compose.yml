@@ -1,0 +1,11 @@
+services:
+  live-worker:
+    build: .
+    restart: always
+    volumes:
+      - ./serviceAccount.json:/app/serviceAccount.json:ro
+      - ./cache:/app/cache
+    environment:
+      - CACHE_DIR=/app/cache
+      # - VIDEO_KBPS=2500
+      # - COPY_MODE=1

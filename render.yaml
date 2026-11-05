@@ -1,0 +1,15 @@
+# Render Blueprint — use this when your GitHub repo contains ONLY the live-worker folder.
+services:
+  - type: worker                 # Background Worker (no free plan; Starter is the cheapest)
+    name: creator-rivo-live-worker
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    autoDeploy: true
+    envVars:
+      - key: COPY_MODE            # 1 = no re-encoding (needed on the 0.5 CPU Starter plan)
+        value: "1"
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: /etc/secrets/serviceAccount.json
+      - key: CACHE_DIR
+        value: /tmp/cache

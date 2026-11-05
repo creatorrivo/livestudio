@@ -1,0 +1,26 @@
+// Add inside `match /databases/{database}/documents { ... }`
+// (adapt isAdmin() if you already have one)
+function isAdmin() {
+  return request.auth != null &&
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+}
+
+// Public: status/title shown on live.php. Only admins can write (the worker uses the Admin SDK and bypasses rules).
+match /liveStreams/{id} {
+  allow read: if true;
+  allow write: if isAdmin();
+}
+
+// PRIVATE: the YouTube stream key. Admin only — never readable by visitors.
+match /liveSecrets/{id} {
+  allow read, write: if isAdmin();
+}
+
+// YouTube & Facebook Sell listings
+match /socialSell/{id} {
+  allow read: if true;
+  allow write: if isAdmin();
+}
+
+// Storage rules (Firebase Console → Storage → Rules): allow admins to upload to live/
+// match /live/{file} { allow read: if true; allow write: if request.auth != null; }
