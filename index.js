@@ -20,7 +20,16 @@ if(!existsSync(CREDS)){
   console.error(`Service account file not found: ${CREDS}\nSee README.md (step 2).`);
   process.exit(1);
 }
-admin.initializeApp({ credential: admin.credential.cert(JSON.parse(readFileSync(CREDS, 'utf8'))) });
+let sa;
+try{ sa = JSON.parse(readFileSync(CREDS, 'utf8')); }
+catch(e){ console.error('serviceAccount.json is NOT valid JSON (bad copy/paste?):', e.message); process.exit(1); }
+if(sa.type !== 'service_account' || !sa.project_id || !sa.private_key){
+  console.error('WRONG KEY FILE. Top-level keys found:', Object.keys(sa).join(', '));
+  console.error('A correct Firebase service-account key has: type, project_id, private_key_id, private_key, client_email ...');
+  process.exit(1);
+}
+console.log('service account OK for project:', sa.project_id);
+admin.initializeApp({ credential: admin.credential.cert(sa) });
 const db = admin.firestore();
 const FieldValue = admin.firestore.FieldValue;
 
