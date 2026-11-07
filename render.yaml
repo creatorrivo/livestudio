@@ -13,3 +13,5 @@ services:
         value: /etc/secrets/serviceAccount.json
       - key: CACHE_DIR
         value: /tmp/cache
+      - key: MAX_STREAMS
+        value: "2"
